@@ -17,7 +17,7 @@ public class ICFP {
         try { 
             String[] arguments = {"0x00000000000001", "0xEFFFFFFFFFFFFF"};
             //Obviously change this
-            System.out.println(WebFunctions.evalbyID("dk4sOnZ2AeriXMoe2Ka1XoCL",arguments, key).getstatus());
+            System.out.println(WebFunctions.evalbyProgram("(lambda (x) (shl1 x))",arguments, key).getstatus());
         } catch (Exception e) {e.printStackTrace();}
     }
 }
