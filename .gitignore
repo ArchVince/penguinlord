@@ -1,0 +1,24 @@
+#########################
+##Eclipse project files##
+#########################
+.metadata
+icfp/.classpath
+icfp/.project
+
+##########################
+##Netbeans project files##
+##########################
+icfp/nbproject
+icfp/build.xml
+icfp/manifest.mf
+
+#######
+##Key##
+#######
+icfp/src/icfp/Key.java
+
+###############
+##Build files##
+###############
+*.class
+icfp/bin
