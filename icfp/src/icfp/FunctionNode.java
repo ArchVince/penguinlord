@@ -32,6 +32,21 @@ public class FunctionNode {
 		}
 	}
 	
+	public String getProgram()
+	{
+		switch(function.getInputCount())
+		{
+			case 1:
+				return function.getProgramSegment(inputFunctions[0].getProgram());
+			case 2:
+				return function.getProgramSegment(inputFunctions[0].getProgram(), inputFunctions[1].getProgram());
+			case 3:
+				return function.getProgramSegment(inputFunctions[0].getProgram(), inputFunctions[1].getProgram(), inputFunctions[2].getProgram());
+			default:
+				throw new IllegalArgumentException("Invalid number of inputs in function");
+		}
+	}
+	
 	public int getTotalSize()
 	{
 		if(inputFunctions.length == 0)

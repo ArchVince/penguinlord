@@ -15,4 +15,14 @@ public class ConstantFunction implements Function {
 	{
 		return 1;
 	}
+	
+	public String getProgramSegment(String... inputs)
+	{
+		throw new UnsupportedOperationException("Constants should only be called from the node");
+	}
+	
+	public String[] getVariableNames()
+	{
+		return new String[0];
+	}
 }

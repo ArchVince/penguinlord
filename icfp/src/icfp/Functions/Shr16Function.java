@@ -15,4 +15,14 @@ public class Shr16Function implements Function {
 	{
 		return 1;
 	}
+	
+	public String getProgramSegment(String... inputs)
+	{
+		return "(shr16 " + inputs[0] + ")";
+	}
+	
+	public String[] getVariableNames()
+	{
+		return new String[0];
+	}
 }

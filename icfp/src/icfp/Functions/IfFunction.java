@@ -15,4 +15,14 @@ public class IfFunction implements Function {
 	{
 		return 1;
 	}
+	
+	public String getProgramSegment(String... inputs)
+	{
+		return "(if0 " + inputs[0] + " " + inputs[1] + " " + inputs[2] + ")";
+	}
+	
+	public String[] getVariableNames()
+	{
+		return new String[0];
+	}
 }

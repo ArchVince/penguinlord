@@ -15,4 +15,14 @@ public class AndFunction implements Function {
 	{
 		return 1;
 	}
+	
+	public String getProgramSegment(String... inputs)
+	{
+		return "(and " + inputs[0] + " " + inputs[1] + ")";
+	}
+	
+	public String[] getVariableNames()
+	{
+		return new String[0];
+	}
 }

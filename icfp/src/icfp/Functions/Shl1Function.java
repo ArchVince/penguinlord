@@ -15,4 +15,14 @@ public class Shl1Function implements Function {
 	{
 		return 1;
 	}
+	
+	public String getProgramSegment(String... inputs)
+	{
+		return "(shl1 " + inputs[0] + ")";
+	}
+	
+	public String[] getVariableNames()
+	{
+		return new String[0];
+	}
 }

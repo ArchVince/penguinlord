@@ -7,4 +7,6 @@ public interface Function {
 	public abstract long run(long... inputs);
 	public abstract int getInputCount();
 	public abstract int getSize();
+	public abstract String getProgramSegment(String... inputs);
+	public abstract String[] getVariableNames();
 }

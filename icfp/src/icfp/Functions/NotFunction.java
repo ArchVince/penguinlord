@@ -15,4 +15,14 @@ public class NotFunction implements Function {
 	{
 		return 1;
 	}
+	
+	public String getProgramSegment(String... inputs)
+	{
+		return "(not " + inputs[0] + ")";
+	}
+	
+	public String[] getVariableNames()
+	{
+		return new String[0];
+	}
 }

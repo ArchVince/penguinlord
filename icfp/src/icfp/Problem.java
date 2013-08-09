@@ -11,28 +11,13 @@ public class Problem {
 	
 	private class Result
 	{
-		int[] indexes;
+		ArrayList<ArrayList<Integer>> indexes;
 		long result;
-	}
-	
-	private class Variable
-	{
-		String name;
-		long value;
-		int layerAdded;
-		
-		public Variable(String name, long value, int layerAdded)
-		{
-			this.name = name;
-			this.value = value;
-			this.layerAdded = layerAdded;
-		}
 	}
 	
 	private int size;
 	private String[] operators;
 	private int index;
-	private ArrayList<Variable> availableVariables;
 	private ArrayList<FunctionNode> outerLayer;
 	private ArrayList<FunctionNode> innerLayer;
 	private ArrayList<Integer> solutions;
@@ -44,9 +29,9 @@ public class Problem {
 	{
 		this.size = size;
 		this.operators = operators;
-		availableVariables.add(new Variable("x_0", 0, -1));
-		availableVariables.add(new Variable("0", 0, -1));
-		availableVariables.add(new Variable("1", 1, -1));
+		VariableBank.variables.add(new Variable("x_0", 0, -1));
+		VariableBank.variables.add(new Variable("0", 0, -1));
+		VariableBank.variables.add(new Variable("1", 1, -1));
 	}
 	
 	private ArrayList<FunctionNode> buildAllTrees(int maxSize, boolean ending)
@@ -56,59 +41,58 @@ public class Problem {
 		return trees;
 	}
 	
-	public FunctionNode setInputValues(FunctionNode tree, long... inputs)
+	public FunctionNode setInputValues(FunctionNode tree, long input, String name)
 	{
-		if(inputs.length == 1)
+		for(int i = 0; i < tree.endNodes.size(); i++)
 		{
-			for(int i = 0; i < tree.endNodes.size(); i++)
+			switch(tree.endNodes.get(i).function.getInputCount())
 			{
-				switch(tree.endNodes.get(i).function.getInputCount())
-				{
-					case 1:
-						tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
-																					 new ConstantNode(inputs[0]) 
-																				 }; break;
-					case 2:
-						tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
-																					 new ConstantNode(inputs[0]),  
-																					 new ConstantNode(inputs[0])
-																				 }; break;
-					case 3:
-						tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
-																					 new ConstantNode(inputs[0]),  
-																					 new ConstantNode(inputs[0]), 
-																					 new ConstantNode(inputs[0])
-																				 }; break;
-					default:
-						System.out.println("WARNING: default used on inputCount: " + tree.endNodes.get(i).function.getInputCount());
-				}
+				case 1:
+					tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
+																				 new ConstantNode(input, name) 
+																			 }; break;
+				case 2:
+					tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
+																				 new ConstantNode(input, name),  
+																				 new ConstantNode(input, name)
+																			 }; break;
+				case 3:
+					tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
+																				 new ConstantNode(input, name),  
+																				 new ConstantNode(input, name), 
+																				 new ConstantNode(input, name)
+																			 }; break;
+				default:
+					System.out.println("WARNING: default used on inputCount: " + tree.endNodes.get(i).function.getInputCount());
 			}
 		}
-		else
+		return tree;
+	}
+	
+	public FunctionNode setInputValues(FunctionNode tree, long[] inputs, String[] programs)
+	{
+		int inputCounter = 0;
+		for(int i = 0; i < tree.endNodes.size(); i++)
 		{
-			int inputCounter = 0;
-			for(int i = 0; i < tree.endNodes.size(); i++)
+			switch(tree.endNodes.get(i).function.getInputCount())
 			{
-				switch(tree.endNodes.get(i).function.getInputCount())
-				{
-					case 1:
-						tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
-																					 new ConstantNode(inputs[inputCounter++]) 
-																				 }; break;
-					case 2:
-						tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
-																					 new ConstantNode(inputs[inputCounter++]),  
-																					 new ConstantNode(inputs[inputCounter++])
-																				 }; break;
-					case 3:
-						tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
-																					 new ConstantNode(inputs[inputCounter++]),  
-																					 new ConstantNode(inputs[inputCounter++]), 
-																					 new ConstantNode(inputs[inputCounter++])
-																				 }; break;
-					default:
-						System.out.println("WARNING: default used on inputCount: " + tree.endNodes.get(i).function.getInputCount());
-				}
+				case 1:
+					tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
+																				 new ConstantNode(inputs[inputCounter], programs[inputCounter++]) 
+																			 }; break;
+				case 2:
+					tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
+																				 new ConstantNode(inputs[inputCounter], programs[inputCounter++]),  
+																				 new ConstantNode(inputs[inputCounter], programs[inputCounter++])
+																			 }; break;
+				case 3:
+					tree.endNodes.get(i).inputFunctions = new FunctionNode[] { 
+																				 new ConstantNode(inputs[inputCounter], programs[inputCounter++]),  
+																				 new ConstantNode(inputs[inputCounter], programs[inputCounter++]), 
+																				 new ConstantNode(inputs[inputCounter], programs[inputCounter++])
+																			 }; break;
+				default:
+					System.out.println("WARNING: default used on inputCount: " + tree.endNodes.get(i).function.getInputCount());
 			}
 		}
 		return tree;
@@ -141,16 +125,86 @@ public class Problem {
 	
 	private String buildProgram(int solutionIndex)
 	{
+		Result solution = innerValues.get(innerValues.size() - 1)[solutionIndex];
 		
+		String[] args = new String[solution.indexes.get(solution.indexes.size() - 1).size()];
+		for(int i = 0; i < args.length; i++)
+		{
+			setInputValues(outerLayer.get(solution.indexes.get(solution.indexes.size() - 1).get(i)), 0, "x_0");
+			args[i] = outerLayer.get(solution.indexes.get(solution.indexes.size() - 1).get(i)).getProgram();
+		}
+		for(int i = solution.indexes.size() - 2; i >= 0; i--)
+		{
+			String[] nextArgs = new String[solution.indexes.get(i).size()];
+			int argsIndex = 0;
+			for(int h = 0; h < solution.indexes.get(i).size(); h++)
+			{
+				switch(innerLayer.get(solution.indexes.get(i).get(h)).function.getInputCount())
+				{
+					case 1: 
+						setInputValues(innerLayer.get(solution.indexes.get(i).get(h)), 0, args[argsIndex++]); break;
+					case 2: 
+						setInputValues(innerLayer.get(solution.indexes.get(i).get(h)), new long[2], new String[] { args[argsIndex++], args[argsIndex++] }); break;
+					case 3: 
+						setInputValues(innerLayer.get(solution.indexes.get(i).get(h)), new long[3], new String[] { args[argsIndex++], args[argsIndex++], args[argsIndex++] }); break;
+					default:
+						System.out.println("WARNING: default used on isValid: " + innerLayer.get(solution.indexes.get(i).get(h)).function.getInputCount());
+				}
+				if(argsIndex != args.length)
+					System.out.println("WARNING: Not all args used");
+				
+				nextArgs[h] = innerLayer.get(solution.indexes.get(i).get(h)).getProgram();
+			}
+			args = nextArgs;
+		}
+		if(args.length != 1)
+			System.out.println("WARNING: Multiple results");
+		
+		return args[0];
 	}
 	
 	private boolean isValid(long[] inputs, long[] outputs, int solutionIndex)
 	{
-		for(int i = 1; i < inputs.length; i++)
+		Result solution = innerValues.get(innerValues.size() - 1)[solutionIndex];
+		for(int j = 0; j < inputs.length; j++)
 		{
-			for(int i = 0; i < outerLayer.size(); i++)
-				setInputValues(outerLayer.get(i), input);
+			long[] args = new long[solution.indexes.get(solution.indexes.size() - 1).size()];
+			for(int i = 0; i < args.length; i++)
+			{
+				setInputValues(outerLayer.get(solution.indexes.get(solution.indexes.size() - 1).get(i)), inputs[j], "x_0");
+				args[i] = outerLayer.get(solution.indexes.get(solution.indexes.size() - 1).get(i)).getValue();
+			}
+			for(int i = solution.indexes.size() - 2; i >= 0; i--)
+			{
+				long[] nextArgs = new long[solution.indexes.get(i).size()];
+				int argsIndex = 0;
+				for(int h = 0; h < solution.indexes.get(i).size(); h++)
+				{
+					switch(innerLayer.get(solution.indexes.get(i).get(h)).function.getInputCount())
+					{
+						case 1: 
+							setInputValues(innerLayer.get(solution.indexes.get(i).get(h)), args[argsIndex++], ""); break;
+						case 2: 
+							setInputValues(innerLayer.get(solution.indexes.get(i).get(h)), new long[] { args[argsIndex++], args[argsIndex++] }, new String[] { "", "" }); break;
+						case 3: 
+							setInputValues(innerLayer.get(solution.indexes.get(i).get(h)), new long[] { args[argsIndex++], args[argsIndex++], args[argsIndex++] }, new String[] { "", "", "" }); break;
+						default:
+							System.out.println("WARNING: default used on isValid: " + innerLayer.get(solution.indexes.get(i).get(h)).function.getInputCount());
+					}
+					if(argsIndex != args.length)
+						System.out.println("WARNING: Not all args used");
+					
+					nextArgs[h] = innerLayer.get(solution.indexes.get(i).get(h)).getValue();
+				}
+				args = nextArgs;
+			}
+			if(args.length != 1)
+				System.out.println("WARNING: Multiple results");
+			
+			if(args[0] != outputs[j])
+				return false;
 		}
+		return true;
 	}
 	
 	private void findPossibleSolution(long input, long output)
@@ -158,7 +212,7 @@ public class Problem {
 		if(outerValues == null)
 		{
 			for(int i = 0; i < outerLayer.size(); i++)
-				setInputValues(outerLayer.get(i), input);
+				setInputValues(outerLayer.get(i), input, "x_0");
 			
 			outerValues = new long[outerLayer.size()];
 					
