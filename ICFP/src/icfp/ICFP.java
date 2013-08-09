@@ -15,7 +15,8 @@ public class ICFP {
     public static void main(String[] args) {
         final String key = Key.getCode();
         try { 
-            WebFunctions.myproblems(key);
-        } catch (Exception e) {System.out.println(e);}
+            //Will need to change this appropriately
+            System.out.println(WebFunctions.Guess("vKVGtougUz1LdHaURvYhv7WX","(lambda (x_1027) (fold x_1027 0 (lambda (x_1027 x_1028) (or 1 x_1027))))", key).getstatus());
+        } catch (Exception e) {e.printStackTrace();}
     }
 }
