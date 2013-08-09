@@ -61,4 +61,24 @@ public class WebFunctions {
             return mapper.readValue(conn.getInputStream(),EvalResponse.class);
         else {System.out.println("Error: " + responseCode); return null;}
     }
+    public static GuessResponse Guess(String id, String program, String key) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        GuessRequest req = new GuessRequest(id, program);
+        String rawData = "" + mapper.writeValueAsString(req);
+        URL url = new URL("http://icfpc2013.cloudapp.net/guess?auth=" + key);
+        String type = "application/x-www-form-urlencoded";
+        String encodedData = URLEncoder.encode( rawData ); 
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod( "POST" );
+        conn.setRequestProperty( "Content-Type", type );
+        conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
+        OutputStream os = conn.getOutputStream();
+        os.write( rawData.getBytes() );
+        os.close();
+        int responseCode = conn.getResponseCode();
+        if (responseCode == 200) 
+            return mapper.readValue(conn.getInputStream(),GuessResponse.class);
+        else {System.out.println("Error: " + responseCode); return null;}
+    }
 }
