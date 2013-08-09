@@ -3,7 +3,7 @@ package icfp.Functions;
 public class Shr16Function implements Function {
 	public long run(long... inputs)
 	{
-		return inputs[0] >> 16;
+		return inputs[0] >>> 16;
 	}
 	
 	public int getInputCount()
