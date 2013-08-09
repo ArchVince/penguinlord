@@ -4,13 +4,10 @@
  */
 package icfp;
 import java.net.*;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.*;
-import java.util.List;
+import java.io.OutputStream;
 /**
  *
  * @author marcus
@@ -23,5 +20,25 @@ public class WebFunctions {
         URL url = new URL("http://icfpc2013.cloudapp.net/myproblems?auth=" + key);
         ReadProblem[] problemlist = mapper.readValue(url.openStream(), ReadProblem[].class);
         return problemlist;
+    }
+    public static EvalResponse evalbyID(String ID, String[] arguments, String key) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        EvalIDRequest req = new EvalIDRequest("dk4sOnZ2AeriXMoe2Ka1XoCL",arguments);
+        String rawData = "" + mapper.writeValueAsString(req);
+        URL url = new URL("http://icfpc2013.cloudapp.net/eval?auth=" + key);
+        String type = "application/x-www-form-urlencoded";
+        String encodedData = URLEncoder.encode( rawData ); 
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod( "POST" );
+        conn.setRequestProperty( "Content-Type", type );
+        conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
+        OutputStream os = conn.getOutputStream();
+        os.write( rawData.getBytes() );
+        os.close();
+        int responseCode = conn.getResponseCode();
+        if (responseCode == 200) 
+            return mapper.readValue(conn.getInputStream(),EvalResponse.class);
+        else {System.out.println("Error: " + responseCode); return null;}
     }
 }

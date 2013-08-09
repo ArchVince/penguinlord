@@ -15,7 +15,9 @@ public class ICFP {
     public static void main(String[] args) {
         final String key = Key.getCode();
         try { 
-            WebFunctions.myproblems(key);
-        } catch (Exception e) {System.out.println(e);}
+            String[] arguments = {"0x00000000000001", "0xEFFFFFFFFFFFFF"};
+            //Obviously change this
+            System.out.println(WebFunctions.evalbyID("dk4sOnZ2AeriXMoe2Ka1XoCL",arguments, key).getstatus());
+        } catch (Exception e) {e.printStackTrace();}
     }
 }
